@@ -21,6 +21,8 @@ This project is for learning only and is not a medical diagnosis.
 4. Run `python app.py`.
 5. Open `http://127.0.0.1:5000` and create an account.
 
+On Windows, you can run `run_project.bat`; it creates a virtual environment, installs dependencies, trains the model if it is missing, and starts the app.
+
 The trained model and SQLite database are generated locally and are excluded from Git. Set a strong `SECRET_KEY` environment variable before any deployment. For production use HTTPS and persistent storage for the database.
 
 ## Disclaimer
