@@ -81,7 +81,7 @@ def health(): return jsonify({'success':True,'status':'ok'})
 def predict():
     if not MODEL_PATH.is_file(): return jsonify({'success':False,'error':'Model file missing. Run train_model.py first.'}),503
     try:
-        data = request.get_json(force=True)
+        data = request.get_json(silent=True)
         if not isinstance(data, dict): return jsonify({'success':False,'error':'Send a JSON object containing all eight features.'}),400
         values = {key:float(data[key]) for key in FEATURES}
         if any(not pd.notna(value) or value < 0 for value in values.values()): return jsonify({'success':False,'error':'Input values must be valid non-negative numbers.'}),400
