@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GlycoSight | Early Diabetes Prediction</title>
+    <meta
+      name="description"
+      content="Educational web app that estimates early diabetes risk from clinical markers using a logistic regression model trained in the spirit of the Pima Indians Diabetes dataset."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="#top">
+          <span class="brand-mark" aria-hidden="true"></span>
+          GlycoSight
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="#problem">The problem</a>
+          <a href="#method">How it works</a>
+          <a href="#predict">Predict</a>
+          <a href="#about">About</a>
+        </nav>
+        <a class="btn btn-small" href="#predict">Run a check</a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="wrap hero-grid">
+          <div>
+            <p class="eyebrow">Machine learning · Clinical markers</p>
+            <h1>Early prediction of diabetes, explained in the open.</h1>
+            <p class="lede">
+              GlycoSight estimates type 2 diabetes risk from eight routine
+              measurements using a logistic regression model. It is an
+              educational screening aid — not a diagnosis.
+            </p>
+            <div class="hero-actions">
+              <a class="btn" href="#predict">Estimate risk</a>
+              <a class="btn btn-ghost" href="#method">See the algorithm</a>
+            </div>
+            <ul class="hero-meta">
+              <li><strong>8</strong> input features</li>
+              <li><strong>2</strong> compared models</li>
+              <li><strong>PIMA</strong> dataset lineage</li>
+            </ul>
+          </div>
+          <aside class="hero-card" aria-label="Model snapshot">
+            <p class="card-kicker">Live model snapshot</p>
+            <h2>Logistic regression</h2>
+            <p>
+              Probability of diabetes is
+              <code>σ(w · x + b)</code>
+              after standardizing each feature against PIMA training statistics.
+            </p>
+            <dl class="stat-grid">
+              <div>
+                <dt>Primary signal</dt>
+                <dd>Glucose</dd>
+              </div>
+              <div>
+                <dt>Secondary</dt>
+                <dd>BMI · Age</dd>
+              </div>
+              <div>
+                <dt>Decision threshold</dt>
+                <dd>0.50 probability</dd>
+              </div>
+              <div>
+                <dt>Runtime</dt>
+                <dd>In-browser, no server</dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="problem">
+        <div class="wrap">
+          <p class="eyebrow">Why early prediction</p>
+          <h2>Diabetes often develops years before a diagnosis.</h2>
+          <div class="split">
+            <p>
+              Type 2 diabetes can stay silent while glucose regulation slowly
+              fails. Catching elevated risk from simple clinic values — fasting
+              glucose, BMI, blood pressure, family-history style pedigree,
+              age — gives people time to change diet, activity, and follow-up
+              before complications set in.
+            </p>
+            <p>
+              Machine learning is useful here because the relationship is
+              multivariate. No single number is enough: a moderately high
+              glucose with obesity and a strong pedigree is a different story
+              than the same glucose in a younger person with a healthy BMI.
+            </p>
+          </div>
+          <div class="cards three">
+            <article class="card">
+              <h3>Screen, don’t diagnose</h3>
+              <p>
+                Models like this rank risk. A clinician still confirms with
+                fasting plasma glucose, HbA1c, or an oral glucose tolerance
+                test.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Cheap features</h3>
+              <p>
+                The eight PIMA-style markers are already collected in many
+                check-ups, so the model can run without extra lab panels.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Transparent weights</h3>
+              <p>
+                Logistic regression shows which inputs push risk up. You can
+                inspect coefficients instead of treating the model as a black
+                box.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="method">
+        <div class="wrap">
+          <p class="eyebrow">Pipeline</p>
+          <h2>From raw measurements to a probability.</h2>
+          <ol class="steps">
+            <li>
+              <h3>Collect features</h3>
+              <p>
+                Pregnancies, glucose, blood pressure, skin thickness, insulin,
+                BMI, diabetes pedigree function, and age.
+              </p>
+            </li>
+            <li>
+              <h3>Standardize</h3>
+              <p>
+                Each value is z-scored with the training mean and standard
+                deviation so coefficients are on a comparable scale.
+              </p>
+            </li>
+            <li>
+              <h3>Score two models</h3>
+              <p>
+                Logistic regression produces a calibrated probability. A
+                compact random-forest style ensemble of threshold rules is
+                shown as a second opinion.
+              </p>
+            </li>
+            <li>
+              <h3>Explain</h3>
+              <p>
+                Feature contributions (weight × z-score) are ranked so you can
+                see what drove the estimate.
+              </p>
+            </li>
+          </ol>
+
+          <div class="table-wrap">
+            <table>
+              <caption>
+                Logistic regression coefficients (standardized PIMA-style fit)
+              </caption>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Coefficient</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Glucose</td>
+                  <td>+1.13</td>
+                  <td>Strongest positive driver of risk</td>
+                </tr>
+                <tr>
+                  <td>BMI</td>
+                  <td>+0.62</td>
+                  <td>Adiposity linked to insulin resistance</td>
+                </tr>
+                <tr>
+                  <td>Pregnancies</td>
+                  <td>+0.41</td>
+                  <td>Gestational history as a risk marker</td>
+                </tr>
+                <tr>
+                  <td>Diabetes pedigree</td>
+                  <td>+0.31</td>
+                  <td>Family-history intensity</td>
+                </tr>
+                <tr>
+                  <td>Age</td>
+                  <td>+0.18</td>
+                  <td>Risk rises with age</td>
+                </tr>
+                <tr>
+                  <td>Blood pressure</td>
+                  <td>−0.26</td>
+                  <td>Weaker / noisy after other factors</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="predict">
+        <div class="wrap">
+          <p class="eyebrow">Interactive estimator</p>
+          <h2>Enter clinical markers</h2>
+          <p class="section-intro">
+            Values default to a typical adult profile. Adjust them, then run
+            the model. Missing labs can stay at 0, matching how many PIMA
+            records encoded absent tests — the model will still run, but
+            confidence is lower.
+          </p>
+
+          <div class="predict-layout">
+            <form id="predict-form" class="predict-form" novalidate>
+              <div class="field-grid">
+                <label>
+                  Pregnancies
+                  <input
+                    name="pregnancies"
+                    type="number"
+                    min="0"
+                    max="20"
+                    step="1"
+                    value="1"
+                    required
+                  />
+                  <span>Count of pregnancies (0 if not applicable)</span>
+                </label>
+                <label>
+                  Glucose (mg/dL)
+                  <input
+                    name="glucose"
+                    type="number"
+                    min="0"
+                    max="300"
+                    step="1"
+                    value="118"
+                    required
+                  />
+                  <span>Plasma glucose concentration</span>
+                </label>
+                <label>
+                  Blood pressure (mm Hg)
+                  <input
+                    name="bloodPressure"
+                    type="number"
+                    min="0"
+                    max="180"
+                    step="1"
+                    value="72"
+                    required
+                  />
+                  <span>Diastolic blood pressure</span>
+                </label>
+                <label>
+                  Skin thickness (mm)
+                  <input
+                    name="skinThickness"
+                    type="number"
+                    min="0"
+                    max="99"
+                    step="1"
+                    value="23"
+                    required
+                  />
+                  <span>Triceps skin fold</span>
+                </label>
+                <label>
+                  Insulin (µU/mL)
+                  <input
+                    name="insulin"
+                    type="number"
+                    min="0"
+                    max="900"
+                    step="1"
+                    value="79"
+                    required
+                  />
+                  <span>2-hour serum insulin</span>
+                </label>
+                <label>
+                  BMI (kg/m²)
+                  <input
+                    name="bmi"
+                    type="number"
+                    min="0"
+                    max="70"
+                    step="0.1"
+                    value="28.4"
+                    required
+                  />
+                  <span>Body mass index</span>
+                </label>
+                <label>
+                  Diabetes pedigree
+                  <input
+                    name="dpf"
+                    type="number"
+                    min="0"
+                    max="2.5"
+                    step="0.001"
+                    value="0.372"
+                    required
+                  />
+                  <span>Family-history function (0–2.5 typical)</span>
+                </label>
+                <label>
+                  Age (years)
+                  <input
+                    name="age"
+                    type="number"
+                    min="1"
+                    max="120"
+                    step="1"
+                    value="33"
+                    required
+                  />
+                  <span>Age at assessment</span>
+                </label>
+              </div>
+              <div class="form-actions">
+                <button class="btn" type="submit">Predict risk</button>
+                <button class="btn btn-ghost" type="button" id="sample-high">
+                  Load high-risk sample
+                </button>
+                <button class="btn btn-ghost" type="reset">Reset</button>
+              </div>
+            </form>
+
+            <div class="result-panel" id="result-panel" aria-live="polite">
+              <p class="result-placeholder">
+                Submit the form to see probability, risk band, and which
+                features contributed most.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" id="about">
+        <div class="wrap about-grid">
+          <div>
+            <p class="eyebrow">Limits</p>
+            <h2>Built for learning, not the clinic.</h2>
+            <p>
+              The Pima Indians Diabetes dataset is a classic teaching set. It
+              is small, historically specific, and contains placeholder zeros
+              for missing labs. A production screener would be retrained on
+              local, diverse, prospectively collected data and validated
+              against HbA1c or fasting glucose outcomes.
+            </p>
+            <p>
+              GlycoSight runs entirely in your browser. Nothing you type is
+              uploaded. Treat every output as a demonstration of how logistic
+              regression and simple ensembles score diabetes risk.
+            </p>
+          </div>
+          <aside class="disclaimer">
+            <h3>Medical disclaimer</h3>
+            <p>
+              This website does not provide medical advice, diagnosis, or
+              treatment. If you are concerned about diabetes, talk to a
+              qualified clinician. Emergency symptoms need urgent care, not
+              a web form.
+            </p>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <p>GlycoSight · Early diabetes prediction with machine learning</p>
+        <p>Educational prototype · Client-side models only</p>
+      </div>
+    </footer>
+
+    <script src="js/model.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
