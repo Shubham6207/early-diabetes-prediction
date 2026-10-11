@@ -2,10 +2,7 @@
   const form = document.getElementById("predict-form");
   const panel = document.getElementById("result-panel");
   const highSample = document.getElementById("sample-high");
-
-  // Set this to the deployed Flask API URL, for example:
-  // window.DIABETES_API_URL = "https://your-service.onrender.com";
-  const API_BASE_URL = (window.DIABETES_API_URL || "").replace(/\/$/, "");
+  const API_BASE_URL = window.location.origin;
 
   const HIGH_RISK_SAMPLE = {
     pregnancies: 8,
@@ -58,7 +55,6 @@
     const positive = Number(result.prediction) === 1;
     const label = positive ? "Higher model estimate" : "Lower model estimate";
     const className = positive ? "risk-high" : "risk-low";
-
     panel.innerHTML = `
       <p class="eyebrow">Python ML model output</p>
       <h3><span class="risk-pill ${className}">${label}</span></h3>
@@ -71,23 +67,17 @@
           <p style="margin:0;color:var(--muted);">Model-estimated probability for the positive class.</p>
         </div>
       </div>
-      <p style="margin:0.8rem 0 0;color:var(--muted);font-size:0.88rem;">
-        ${result.disclaimer || "Educational estimate only; not a medical diagnosis."}
-      </p>
+      <p style="margin:0.8rem 0 0;color:var(--muted);font-size:0.88rem;">${result.disclaimer || "Educational estimate only; not a medical diagnosis."}</p>
     `;
   }
 
   async function predict(inputs) {
-    if (!API_BASE_URL) {
-      showMessage("Backend URL is not configured yet. Deploy the Flask API, then set window.DIABETES_API_URL to its public URL.", true);
-      return;
-    }
-
     showMessage("Python ML model se prediction li ja rahi hai...");
     try {
       const response = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify(toApiPayload(inputs)),
       });
       const result = await response.json();
@@ -96,7 +86,7 @@
       }
       render(result);
     } catch (error) {
-      showMessage(`Prediction nahi ho payi: ${error.message}. Backend URL aur deployment status check karo.`, true);
+      showMessage(`Prediction nahi ho payi: ${error.message}. Model file aur server status check karo.`, true);
     }
   }
 
