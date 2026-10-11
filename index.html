@@ -6,7 +6,7 @@
     <title>GlycoSight | Early Diabetes Prediction</title>
     <meta
       name="description"
-      content="Educational web app that estimates early diabetes risk from clinical markers using a logistic regression model trained in the spirit of the Pima Indians Diabetes dataset."
+      content="Educational web app that estimates diabetes risk from clinical markers using a scikit-learn model and the Pima Indians Diabetes teaching dataset."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -42,7 +42,7 @@
             <h1>Early prediction of diabetes, explained in the open.</h1>
             <p class="lede">
               GlycoSight estimates type 2 diabetes risk from eight routine
-              measurements using a logistic regression model. It is an
+              measurements using a Python machine learning model. It is an
               educational screening aid — not a diagnosis.
             </p>
             <div class="hero-actions">
@@ -57,11 +57,10 @@
           </div>
           <aside class="hero-card" aria-label="Model snapshot">
             <p class="card-kicker">Live model snapshot</p>
-            <h2>Logistic regression</h2>
+            <h2>Random forest classifier</h2>
             <p>
-              Probability of diabetes is
-              <code>σ(w · x + b)</code>
-              after standardizing each feature against PIMA training statistics.
+              The Python model processes the eight clinical markers after handling
+              missing values and applies an ensemble of decision trees.
             </p>
             <dl class="stat-grid">
               <div>
@@ -78,7 +77,7 @@
               </div>
               <div>
                 <dt>Runtime</dt>
-                <dd>In-browser, no server</dd>
+                <dd>Python Flask API</dd>
               </div>
             </dl>
           </aside>
@@ -123,9 +122,8 @@
             <article class="card">
               <h3>Transparent weights</h3>
               <p>
-                Logistic regression shows which inputs push risk up. You can
-                inspect coefficients instead of treating the model as a black
-                box.
+                Tree-based machine learning combines multiple features. Model outputs
+                are estimates and should not be treated as a diagnosis.
               </p>
             </article>
           </div>
@@ -147,16 +145,15 @@
             <li>
               <h3>Standardize</h3>
               <p>
-                Each value is z-scored with the training mean and standard
-                deviation so coefficients are on a comparable scale.
+                Missing clinical measurements are imputed from training-set medians, then
+                numerical features are standardized.
               </p>
             </li>
             <li>
               <h3>Score two models</h3>
               <p>
-                Logistic regression produces a calibrated probability. A
-                compact random-forest style ensemble of threshold rules is
-                shown as a second opinion.
+                A trained random forest combines many decision trees to estimate the
+                probability of the positive class.
               </p>
             </li>
             <li>
@@ -171,7 +168,7 @@
           <div class="table-wrap">
             <table>
               <caption>
-                Logistic regression coefficients (standardized PIMA-style fit)
+                Example clinical features used by the model
               </caption>
               <thead>
                 <tr>
@@ -368,9 +365,9 @@
               against HbA1c or fasting glucose outcomes.
             </p>
             <p>
-              GlycoSight runs entirely in your browser. Nothing you type is
-              uploaded. Treat every output as a demonstration of how logistic
-              regression and simple ensembles score diabetes risk.
+              GlycoSight sends submitted measurements to the local Flask API for scoring.
+              Account details are stored in a local SQLite database. Treat every
+              output as educational and not as medical advice.
             </p>
           </div>
           <aside class="disclaimer">
@@ -389,7 +386,7 @@
     <footer class="site-footer">
       <div class="wrap footer-inner">
         <p>GlycoSight · Early diabetes prediction with machine learning</p>
-        <p>Educational prototype · Client-side models only</p>
+        <p>Educational prototype · Flask and scikit-learn</p>
       </div>
     </footer>
 
