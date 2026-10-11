@@ -19,17 +19,18 @@ def test_signup_login_home_and_logout(tmp_path, monkeypatch):
     monkeypatch.setattr(webapp, 'MODEL_PATH', tmp_path / 'missing-model.joblib')
     client = webapp.app.test_client()
     assert client.get('/').status_code == 302
-    response = client.post('/signup', data={'name':'Test User','email':'test@example.com','password':'SecurePass123','confirm_password':'SecurePass123'}, follow_redirects=True)
+    response = client.post('/signup', data={'name':'Test User','user_id':'testuser123','password':'SecurePass123','confirm_password':'SecurePass123'}, follow_redirects=True)
     assert response.status_code == 200
     assert b'GlycoSight' in response.data
     with sqlite3.connect(database) as connection:
-        saved = connection.execute('SELECT password_hash FROM users WHERE email=?', ('test@example.com',)).fetchone()
+        saved = connection.execute('SELECT password_hash, user_id FROM users WHERE user_id=?', ('testuser123',)).fetchone()
     assert saved is not None
     assert saved[0] != 'SecurePass123'
+    assert saved[1] == 'testuser123'
     client.post('/logout')
-    failed = client.post('/login', data={'email':'test@example.com','password':'wrong-password'})
-    assert b'Email or password is incorrect.' in failed.data
-    response = client.post('/login', data={'email':'test@example.com','password':'SecurePass123'}, follow_redirects=True)
+    failed = client.post('/login', data={'user_id':'testuser123','password':'wrong-password'})
+    assert b'User ID or password is incorrect.' in failed.data
+    response = client.post('/login', data={'user_id':'testuser123','password':'SecurePass123'}, follow_redirects=True)
     assert response.status_code == 200
     assert b'GlycoSight' in response.data
     assert b'Logout' in response.data
@@ -43,7 +44,7 @@ def test_signup_password_mismatch(tmp_path, monkeypatch):
     setup_database(database)
     monkeypatch.setattr(webapp, 'DB_PATH', database)
     client = webapp.app.test_client()
-    response = client.post('/signup', data={'name':'Test User','email':'test@example.com','password':'SecurePass123','confirm_password':'DifferentPass123'})
+    response = client.post('/signup', data={'name':'Test User','user_id':'testuser123','password':'SecurePass123','confirm_password':'DifferentPass123'})
     assert response.status_code == 200
     assert b'Passwords do not match.' in response.data
 
@@ -60,7 +61,7 @@ def test_prediction_endpoint_with_model(tmp_path, monkeypatch):
     monkeypatch.setattr(webapp, 'DB_PATH', database)
     monkeypatch.setattr(webapp, 'MODEL_PATH', model_path)
     client = webapp.app.test_client()
-    client.post('/signup', data={'name':'Test User','email':'test@example.com','password':'SecurePass123','confirm_password':'SecurePass123'})
+    client.post('/signup', data={'name':'Test User','user_id':'testuser123','password':'SecurePass123','confirm_password':'SecurePass123'})
     response = client.post('/predict', json={'Pregnancies':1,'Glucose':0,'BloodPressure':72,'SkinThickness':23,'Insulin':79,'BMI':28.4,'DiabetesPedigreeFunction':0.372,'Age':33})
     assert response.status_code == 200
     payload = response.get_json()
