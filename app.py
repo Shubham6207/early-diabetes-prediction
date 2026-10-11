@@ -81,8 +81,12 @@ def health(): return jsonify({'success':True,'status':'ok'})
 def predict():
     if not MODEL_PATH.is_file(): return jsonify({'success':False,'error':'Model file missing. Run train_model.py first.'}),503
     try:
-        data = request.get_json(force=True); values = {key:float(data[key]) for key in FEATURES}
-        if any(value < 0 for value in values.values()): return jsonify({'success':False,'error':'Input values must be non-negative.'}),400
+        data = request.get_json(force=True)
+        if not isinstance(data, dict): return jsonify({'success':False,'error':'Send a JSON object containing all eight features.'}),400
+        values = {key:float(data[key]) for key in FEATURES}
+        if any(not pd.notna(value) or value < 0 for value in values.values()): return jsonify({'success':False,'error':'Input values must be valid non-negative numbers.'}),400
+        for key in ['Glucose','BloodPressure','SkinThickness','Insulin','BMI']:
+            if values[key] == 0: values[key] = float('nan')
         artifact = joblib.load(MODEL_PATH); model = artifact.get('model') if isinstance(artifact,dict) else artifact
         probability = float(model.predict_proba(pd.DataFrame([values],columns=FEATURES))[0][1])
         return jsonify({'success':True,'probability':round(probability*100,2),'prediction':int(probability>=0.5),'disclaimer':'Educational estimate only; not a medical diagnosis.'})
